@@ -2,23 +2,53 @@
 #ifndef Queue_h
 #define Queue_h
 
+/** omer 29/12:
+ * for debugging - better to start with int queue and then switch to T
+ * run through code
+ * insert exception handle with operator=() and allocations ?
+ * exception - Queue<T>:EmptyQueue and empty() ?
+ * exceptions - std::bad_alloc and Queue<T>:InvalidOperation ?
+ * should Queue exceptions inherit std::exception?
+ * func ptr or func obj ?
+ * no friends - switch to get()
+ * const and non const Queue support
+ * code conventions
+ * **/
+
+///need to check we're not calling default c'tor of T (may not exist)
+
 template <class T>
 class Queue
 {
 public:
-    Queue(): m_head(nullptr), m_tail(nullptr){}
-    Queue(const Queue& otherQueue)
+    /// omer 29/12: do we need operator=() ?
+    Queue(): m_head(nullptr), m_tail(nullptr) {}
+    Queue(const Queue& otherQueue) : m_head(nullptr), m_tail(nullptr)
     {
-        if(otherQueue.empty())
+        if(otherQueue.empty()) /// omer 29/12: exception?
         {
+            /// omer 29/12: tutorial 8 slide 11 bottom (copy c'tor)
             // this = Queue()  How to do this??
-            Queue();
+            //Queue();
+            return;
         }
+        /// Queue Q1 = existingQueue
+        // create e,pty queue in initialization list
+        // for (each in otherqueue) -> pushBack
+        // if fails (bad alloc was thrown from pushBack):
+        //      1. catch bad alloc
+        //      2. delete current queue
+        //      3. throw bad_alloc
+        // if passes all -> yayy!!
 
-        constIterator i = begin(); 
-        m_head = i
-        temp = m_head
-        for (i != end(); i++)
+        /// maybe we should check syntax sweet for for loop ( for(Element el : otherQueue)?? )
+        ConstIterator i = otherQueue.begin();
+        /// omer 29/12: what's the intention in the loop?
+        /// why =i? what do we check
+        /// ; in two lines ahead - is it in purpose?
+        m_head = i;
+        temp = m_head;
+        for (i != end(); i++) /// for(Element el : otherQueue)
         {
             temp->next = i;
             temp = i;
@@ -26,21 +56,25 @@ public:
         }
     }
 
+
     ~Queue()
     {
         while(!empty())
         {
             popFront();
         }
-        free(m_head);
-        free(m_tail);
+        //free(m_head); /// omer 29/12: why do we free them? whats left?
+        //free(m_tail); /// omer 29/12: why do we free them? whats left?
     }
 
     bool empty() {return m_head == nullptr;}
 
     void pushBack(T data)
     {
+        /// omer 29/12: if fails throw bad alloc
         Element* newElement = new Element;
+
+        /// if fails throw bad alloc ?
         newElement->value = data;
         newElement->next = nullptr;
 
@@ -62,12 +96,14 @@ public:
             throw EmptyQueue();
         }
         return m_head->value;
-
     }
 
     void popFront()
     {
-        if(empty()){return;}
+        /// omer 29/12: do we need to return or to throw EmptyQueue()?
+        if(empty()) {
+            return;
+        }
 
         Element* temp = m_head;
         m_head = m_head->next;
@@ -78,21 +114,29 @@ public:
             m_tail = nullptr;
         }
 
-        delete (temp);
+        delete (temp); /// do we delete the data T inside the element?
+                       /// do we need to change element to struct with
     }
 
     int size()
+    /// omer 29/12: use iterator
     {
-        if(empty()){return 0;}
-
+        if(empty()) {
+            return 0;
+        }
         int counter = 1;
         Element* temp = m_head;
-        while(temp->next != nullptr){counter++;}
+        while(temp->next != nullptr)
+        {
+            counter++;
+            /// omer 29/12: added row bellow:
+            temp = temp->next;
+        }
         return counter;
     }
 
-    class Iterator;
-    class ConstIterator;
+    class Iterator; /// friend?
+    class ConstIterator; /// friend?
 
     Iterator begin()
     {
@@ -112,14 +156,16 @@ public:
         return ConstIterator(m_tail->next);
     }
 
-    class EmptyQueue;
+    class EmptyQueue{};
 
 
 private:
     struct Element
     {
-        T value;
+        ///need to check we're not calling default c'tor of T (may not exist)
+        T value; /// think it's ok, but do we need T* or T ?
         Element *next;
+        /// add c'tor, d'tor, copy c'tor, operator=() (default if generated automatically)
     };
 
     Element* m_head;
