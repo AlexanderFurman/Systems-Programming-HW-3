@@ -12,14 +12,20 @@ public:
         if(otherQueue.empty())
         {
             // this = Queue()  How to do this??
+            Queue();
         }
 
-        for constQueueIterator
+        constIterator i = begin(); 
+        m_head = i
+        temp = m_head
+        for (i != end(); i++)
         {
-            // TODO: Use ConstQueueIterator Here!!!
-
+            temp->next = i;
+            temp = i;
+            m_tail = i;
         }
     }
+
     ~Queue()
     {
         while(!empty())
