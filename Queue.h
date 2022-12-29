@@ -14,9 +14,10 @@ public:
             // this = Queue()  How to do this??
         }
 
-        while(!otherQueue.empty())
+        for constQueueIterator
         {
             // TODO: Use ConstQueueIterator Here!!!
+
         }
     }
     ~Queue()
@@ -85,6 +86,8 @@ public:
     }
 
     class Iterator;
+    class constIterator;
+
     Iterator begin() const
     {
         return Iterator(m_head);
@@ -92,6 +95,15 @@ public:
     Iterator end() const
     {
         return Iterator(m_tail->next);
+    }
+
+    ConstIterator begin() const
+    {
+        return ConstIterator(m_head);
+    }
+    ConstIterator end() const
+    {
+        return ConstIterator(m_tail->next);
     }
 
     class EmptyQueue;
