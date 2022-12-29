@@ -6,14 +6,6 @@ template <class T>
 class Queue
 {
 public:
-    /*
-     * C'tor of Queue class
-     *
-     * @param data - The data
-     * @param stats - The numeral stats of the card.
-     * @return
-     *      A new instance of Queue
-    */
     Queue(): m_head(nullptr), m_tail(nullptr){}
     Queue(const Queue& otherQueue)
     {
@@ -93,8 +85,14 @@ public:
     }
 
     class Iterator;
-    Iterator begin() const;
-    Iterator end() const;
+    Iterator begin() const
+    {
+        return Iterator(m_head);
+    }
+    Iterator end() const
+    {
+        return Iterator(m_tail->next);
+    }
 
     class EmptyQueue;
 
@@ -161,49 +159,23 @@ Queue<S> transform(const Queue<S>& queue, void func(S))
 template<class T>
 class Queue<T>::Iterator 
 {
-    const Queue<T>* m_queue;
-    int m_index;
-    Iterator(const Queue<T>* queue, int index);
-    friend class Queue<T>;
+    Element<T>* m_element;
 
 public:
-    const T& operator*() const;
-    Iterator& operator++();
-    Iterator operator++(int) m_index(m_index ++);
+    Iterator(Element<T>* element) : m_element(element){};
+    const T& operator*()
+    {
+        return m_element->value;
+    }
+
+    Iterator& operator++(int);
+    Iterator operator++();
 
     bool operator==(const Iterator& iterator) const;
     bool operator!=(const Iterator& iterator) const;
 
     Iterator(const Iterator&) = default;
     Iterator& operator=(const Iterator&) = default;
-};
-
-
-
-
-
-
-
-
-template <class T>
-typename Queue<T>::Iterator Queue<T>::begin() const 
-{
-    return Iterator(this, 0);
-}
-
-template <class T>
-typename Queue<T>::Iterator Queue<T>::end() const 
-{
-    return Iterator(this, m_size);
-}
-
-template <class T>
-Queue<T>::Iterator::Iterator(const Queue<T>* queue, int index): m_queue(queue), m_index(index) {}
-
-template <class T>
-const T& Queue<T>::Iterator::operator*() const
-{
-    return queue->m_data
 }
 
 #endif /* Queue_h */
