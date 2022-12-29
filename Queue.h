@@ -92,13 +92,13 @@ public:
     }
 
     class Iterator;
-    class constIterator;
+    class ConstIterator;
 
-    Iterator begin() const
+    Iterator begin()
     {
         return Iterator(m_head);
     }
-    Iterator end() const
+    Iterator end()
     {
         return Iterator(m_tail->next);
     }
@@ -124,7 +124,7 @@ private:
 
     Element* m_head;
     Element* m_tail;
-}
+};
 
 
 
@@ -181,7 +181,7 @@ class Queue<T>::Iterator
 
 public:
     Iterator(Element<T>* element) : m_element(element){};
-    const T& operator*()
+    T& operator*()
     {
         return m_element->value;
     }
@@ -199,11 +199,62 @@ public:
         return *this
     }
 
-    bool operator==(const Iterator& iterator) const;
-    bool operator!=(const Iterator& iterator) const;
+    bool operator==(const Iterator& iterator) const
+    {
+        return m_element == iterator.m_element;
+    }
+    bool operator!=(const Iterator& iterator) const
+    {
+        return m_element != iterator.m_element;
+    }
 
-    Iterator(const Iterator&) = default;
-    Iterator& operator=(const Iterator&) = default;
-}
+    Iterator(const Iterator& iterator): m_element(iterator.m_element) {}
+    Iterator& operator=(const Iterator& iterator): m_element(iterator.m_element) {}
+};
 
-#endif /* Queue_h */
+
+
+
+
+// ConstIterator class for the Queue class
+template<class T>
+class Queue<T>::ConstIterator 
+{
+    Element<T>* m_element;
+
+public:
+    ConstIterator(Element<T>* element) : m_element(element){};
+    const T& operator*()
+    {
+        return m_element->value;
+    }
+
+    const ConstIterator& operator++(int)
+    {
+        Iterator iterator = *this;
+        ++(*this); //Calls the prefix operator on the original iterator
+        return iterator; //returns the value of the iterator before the change
+    }
+
+    const Iterator& operator++()
+    {
+        m_element++;
+        return *this
+    }
+
+    bool operator==(const Iterator& iterator) const
+    {
+        return m_element == iterator.m_element;
+    }
+    bool operator!=(const Iterator& iterator) const
+    {
+        return m_element != iterator.m_element;
+    }
+
+    Iterator(const Iterator& iterator): m_element(iterator.m_element) {}
+    const Iterator& operator=(const Iterator& iterator): m_element(iterator.m_element) {}
+};
+
+
+
+#endif
