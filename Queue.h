@@ -36,7 +36,7 @@ public:
         free(m_tail);
     }
 
-    bool empty() {return m_head == nullptr};
+    bool empty() {return m_head == nullptr;}
 
     void pushBack(T data)
     {
@@ -134,7 +134,7 @@ Queue<S> filter(const Queue<S>& queue, bool func(S))
 {
     // TODO: IMPLEMENT THIS
     Queue<S> newQueue = Queue();
-    Element<S>* tempElement = queue->head;
+    Element<S>* tempElement = queue->m_head;
     while(tempElement != nullptr)
     {
         if(func(tempElement->value))
@@ -153,7 +153,7 @@ Queue<S> transform(const Queue<S>& queue, void func(S))
     // TODO: IMPLEMENT THIS
 
     Queue<S> newQueue = Queue(queue);
-    Element<S>* tempElement = newQueue->head;
+    Element<S>* tempElement = newQueue->m_head;
     while(tempElement != nullptr)
     {
         tempElement->value = func(value);
@@ -186,8 +186,18 @@ public:
         return m_element->value;
     }
 
-    Iterator& operator++(int);
-    Iterator operator++();
+    Iterator& operator++(int)
+    {
+        Iterator iterator = *this;
+        ++(*this); //Calls the prefix operator on the original iterator
+        return iterator; //returns the value of the iterator before the change
+    }
+
+    Iterator& operator++()
+    {
+        m_element++;
+        return *this
+    }
 
     bool operator==(const Iterator& iterator) const;
     bool operator!=(const Iterator& iterator) const;
