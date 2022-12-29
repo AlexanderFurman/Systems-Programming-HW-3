@@ -15,8 +15,27 @@ public:
      *      A new instance of Queue
     */
     Queue(): m_head(nullptr), m_tail(nullptr){}
-    Queue(const Queue&);
-    ~Queue();
+    Queue(const Queue& otherQueue)
+    {
+        if(otherQueue.empty())
+        {
+            // this = Queue()  How to do this??
+        }
+
+        while(!otherQueue.empty())
+        {
+            // TODO: Use ConstQueueIterator Here!!!
+        }
+    }
+    ~Queue()
+    {
+        while(!empty())
+        {
+            popFront();
+        }
+        free(m_head);
+        free(m_tail);
+    }
 
     bool empty() {return m_head == nullptr};
 
@@ -41,7 +60,7 @@ public:
     {
         if(empty())
         {
-            throw EmptyQueue e;
+            throw EmptyQueue();
         }
         return m_head->value;
 
