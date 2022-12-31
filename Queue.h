@@ -53,7 +53,7 @@ public:
         {
             try
             {
-                pushBack(element->value);
+                pushBack(element->getValue());
             }
             catch (std::bad_alloc& badAlloc)
             {
@@ -82,11 +82,11 @@ public:
     void pushBack(T data)
     {
         /// omer 29/12: if fails throw bad alloc
-        Element* newElement = new Element;
+        Element* newElement = new Element(data);
 
-        /// if fails throw bad alloc ?
-        newElement->value = data;
-        newElement->next = nullptr;
+        // /// if fails throw bad alloc ?
+        // newElement->value = data;
+        // newElement->next = nullptr;
 
         if(empty()) 
         {
@@ -124,7 +124,7 @@ public:
             m_tail = nullptr;
         }
 
-//        delete (temp); /// do we delete the data T inside the element?
+       delete (temp); /// do we delete the data T inside the element?
                        /// do we need to change element to struct with
     }
 
@@ -170,21 +170,25 @@ public:
 
 
 private:
+
     struct Element
     {
         ///need to check we're not calling default c'tor of T (may not exist)
-        T m_value; /// think it's ok, but do we need T* or T ?
-        Element *m_next;
+        T value; /// think it's ok, but do we need T* or T ?
+        Element *next;
         /// add c'tor, d'tor, copy c'tor, operator=() (default if generated automatically)
-        explicit Element(const T& data) : m_value(data), m_next(nullptr) {}
-        // Element(const Element& copiedElement) {} //if needed add..
-        ~Element() = default;
+        Element(T data)
+        {
+            value = data; // calls copy constructor of T
+            next = nullptr;
+        }
 
-
+        //~Element() = default; Do I need to have this defined?
     };
 
     Element* m_head;
     Element* m_tail;
+
 };
 
 
