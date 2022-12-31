@@ -145,8 +145,8 @@ public:
         return counter;
     }
 
-    class Iterator; /// friend?
-    class ConstIterator; /// friend?
+    class Iterator;
+    class ConstIterator;
 
     Iterator begin()
     {
@@ -242,83 +242,163 @@ Queue<S> transform(const Queue<S>& queue, void func(S))
 template<class T>
 class Queue<T>::Iterator 
 {
-    Element<T>* m_element;
+private:
+    Queue<T>* const m_queue; ///the iterators queue
+    Queue<T>::Element* m_elementPtr;
 
-public:
-    Iterator(Element<T>* element) : m_element(element){};
-    T& operator*()
+    explicit Iterator(Queue<T>* const queue, Queue<T>::Element* const element)
+                      : m_queue(queue), m_elementPtr(element) {};
+    friend class Queue<T>; /// does set access iterator members? think so - m_elementPtr
+
+    ///are these needed?
+    Iterator(const Iterator& iterator) = default;
+    /// does this copy c'tor need to be non default?-> : m_queue(iterator.m_queue), m_elementPtr(iterator.m_elementPtr) {}
+    Iterator& operator=(const Iterator& iterator) ///of the same set!!
     {
-        return m_element->value;
+        assert (m_queue == iterator.m_queue && (this != iterator)); ///this or *this?? -> this
+        m_elementPtr = iterator.m_elementPtr;
     }
 
-    Iterator& operator++(int)
+
+public:
+
+    T& operator*() const
     {
-        Iterator iterator = *this;
-        ++(*this); //Calls the prefix operator on the original iterator
-        return iterator; //returns the value of the iterator before the change
+        assert(m_elementPtr!= nullptr);
+//        if (m_elementPtr== nullptr) {
+//            return nullptr;
+//        }
+        return m_elementPtr->value;
     }
 
     Iterator& operator++()
+    /// change all iterators++ to ++iterators in set
     {
-        m_element++;
-        return *this
+        m_elementPtr= m_elementPtr->next;
+        return *this;
     }
 
-    bool operator==(const Iterator& iterator) const
+
+    Iterator operator++(int) ///not must
+    ///whats the problem with Iterator no-const return here?
     {
-        return m_element == iterator.m_element;
+        Iterator result = *this;
+        ++(*this); //Calls the prefix operator on the original iterator
+        return result; //returns the value of the iterator before the change
     }
+
+    bool operator==(const Iterator& iterator) const ///not must
+    {
+        assert(m_queue == iterator.m_queue);
+        return m_elementPtr == iterator.m_elementPtr;
+    }
+
     bool operator!=(const Iterator& iterator) const
     {
-        return m_element != iterator.m_element;
+        return !( *this == iterator );
     }
 
-    Iterator(const Iterator& iterator): m_element(iterator.m_element) {}
-    Iterator& operator=(const Iterator& iterator): m_element(iterator.m_element) {}
 };
 
 
-
-
-
-// ConstIterator class for the Queue class
 template<class T>
-class Queue<T>::ConstIterator 
+class Queue<T>::ConstIterator
 {
-    Element<T>* m_element;
+private:
+    const Queue<T>* const m_queue; ///the const queue of cIterator
+    const Queue<T>::Element* m_elementPtr;
+
+    ConstIterator(const Queue<T>* const queue, const Queue<T>::Element* element)
+                  : m_queue(queue), m_elementPtr(element) {};
+    friend class Queue<T>; /// does set access cIterator members? think so - m_elementPtr
+
+    ///are these needed?
+    ConstIterator(const ConstIterator& cIterator) = default;
+    ///copy c'tor - default or not? -> : m_queue(cIterator.m_queue), m_elementPtr(cIterator.m_elementPtr) {}
+
 
 public:
-    ConstIterator(Element<T>* element) : m_element(element){};
-    const T& operator*()
+    ///operator=() deleted
+    ConstIterator& operator=(const ConstIterator& cIterator) = delete;
+
+    const T& operator*() const
     {
-        return m_element->value;
+        assert(m_elementPtr!= nullptr);
+//        if (m_elementPtr== nullptr) {
+//            return nullptr;
+//        }
+        return m_elementPtr->value;
     }
 
-    const ConstIterator& operator++(int)
+    ConstIterator& operator++()
+    /// change all cIterators++ to ++iterators in set
     {
-        Iterator iterator = *this;
-        ++(*this); //Calls the prefix operator on the original iterator
-        return iterator; //returns the value of the iterator before the change
+        m_elementPtr= m_elementPtr->next;
+        return *this;
     }
 
-    const Iterator& operator++()
+
+    ConstIterator operator++(int) ///not must
+    ///whats the problem with cIterator no-const return here?
     {
-        m_element++;
-        return *this
+        ConstIterator result = *this;
+        ++(*this); //Calls the prefix operator on the original cIterator
+        return result; //returns the object of the cIterator before the change
     }
 
-    bool operator==(const Iterator& iterator) const
+    bool operator==(const ConstIterator& cIterator) const ///not must
     {
-        return m_element == iterator.m_element;
-    }
-    bool operator!=(const Iterator& iterator) const
-    {
-        return m_element != iterator.m_element;
+        assert(m_queue == cIterator.m_queue);
+        return m_elementPtr == cIterator.m_elementPtr;
     }
 
-    Iterator(const Iterator& iterator): m_element(iterator.m_element) {}
-    const Iterator& operator=(const Iterator& iterator): m_element(iterator.m_element) {}
+    bool operator!=(const ConstIterator& cIterator) const
+    {
+        return !( *this == cIterator );
+    }
+
 };
+
+
+///prev ConstIterator implementation
+//// ConstIterator class for the Queue class
+//template<class T>
+//class Queue<T>::ConstIterator
+//{
+//    Element<T>* m_element;
+//
+//public:
+//    ConstIterator(Element<T>* element) : m_element(element){};
+//    const T& operator*()
+//    {
+//        return m_element->value;
+//    }
+//
+//    const ConstIterator& operator++(int)
+//    {
+//        Iterator iterator = *this;
+//        ++(*this); //Calls the prefix operator on the original iterator
+//        return iterator; //returns the value of the iterator before the change
+//    }
+//
+//    const Iterator& operator++()
+//    {
+//        m_element++;
+//        return *this
+//    }
+//
+//    bool operator==(const Iterator& iterator) const
+//    {
+//        return m_element == iterator.m_element;
+//    }
+//    bool operator!=(const Iterator& iterator) const
+//    {
+//        return m_element != iterator.m_element;
+//    }
+//
+//    Iterator(const Iterator& iterator): m_element(iterator.m_element) {}
+//    const Iterator& operator=(const Iterator& iterator): m_element(iterator.m_element) {}
+//};
 
 
 
