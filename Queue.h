@@ -115,9 +115,9 @@ public:
 
     void popFront()
     {
-        /// omer 29/12: do we need to return or to throw EmptyQueue()?
+        /// omer 31/12: do we need to return or to throw EmptyQueue()?
         if(empty()) {
-            return;
+            throw EmptyQueue();
         }
 
         Element* temp = m_head;
