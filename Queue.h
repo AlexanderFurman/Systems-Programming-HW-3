@@ -191,41 +191,66 @@ private:
 
 
 
-template <class S>
-Queue<S> filter(const Queue<S>& queue, bool func(S))
-{
-    // TODO: IMPLEMENT THIS
-    Queue<S> newQueue = Queue();
-    Element<S>* tempElement = queue->m_head;
-    while(tempElement != nullptr)
-    {
-        if(func(tempElement->value))
-        {
-            newQueue.pushBack(tempElement->value);
-        }
-        tempElement = tempElement->next;
-    }
+// template <class S>
+// Queue<S> filter(const Queue<S>& queue, bool func(S))
+// {
+//     // TODO: IMPLEMENT THIS
+//     Queue<S> newQueue = Queue();
+//     Element<S>* tempElement = queue->m_head;
+//     while(tempElement != nullptr)
+//     {
+//         if(func(tempElement->value))
+//         {
+//             newQueue.pushBack(tempElement->value);
+//         }
+//         tempElement = tempElement->next;
+//     }
 
-    return newQueue;
-}
+//     return newQueue;
+// }
 
-template <class S>
-Queue<S> transform(const Queue<S>& queue, void func(S))
-{
-    // TODO: IMPLEMENT THIS
+// template <class S>
+// Queue<S> transform(const Queue<S>& queue, void func(S))
+// {
+//     // TODO: IMPLEMENT THIS
 
-    Queue<S> newQueue = Queue(queue);
-    Element<S>* tempElement = newQueue->m_head;
-    while(tempElement != nullptr)
-    {
-        tempElement->value = func(value);
-        tempElement = tempElement->next;
-    }
+//     Queue<S> newQueue = Queue(queue);
+//     Element<S>* tempElement = newQueue->m_head;
+//     while(tempElement != nullptr)
+//     {
+//         tempElement->value = func(value);
+//         tempElement = tempElement->next;
+//     }
 
-    return newQueue;
+//     return newQueue;
     
+// }
+
+template <class T, class F>
+Queue<T> filter(const Queue<T>& queue, const F condition)
+{
+   // TODO: IMPLEMENT THIS
+   Queue<T> newQueue = Queue<T>();
+   for (Element element : queue)
+   {
+        if(condition(element.value))
+        {
+            newQueue.pushBack(element.value);
+        }
+    }
+
+   return newQueue;
 }
 
+template <class T, class F>
+void transform(Queue<T>& queue, const F func)
+{
+   // TODO: IMPLEMENT THIS
+   for(Element element: queue)
+   {
+       element.value = func(element.value);
+   }
+}
 
 
 
