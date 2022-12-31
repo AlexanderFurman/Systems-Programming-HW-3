@@ -18,6 +18,7 @@
 
 ///need to check we're not calling default c'tor of T (may not exist)
 
+
 template <class T>
 class Queue
 {
@@ -89,7 +90,7 @@ public:
         // newElement->value = data;
         // newElement->next = nullptr;
 
-        if(empty()) 
+        if(empty())
         {
             m_head = newElement;
             m_tail = newElement;
@@ -125,8 +126,8 @@ public:
             m_tail = nullptr;
         }
 
-       delete (temp); /// do we delete the data T inside the element?
-                       /// do we need to change element to struct with
+        delete (temp); /// do we delete the data T inside the element?
+        /// do we need to change element to struct with
     }
 
     int size()
@@ -168,6 +169,12 @@ public:
     }
 
     class EmptyQueue{};
+
+    template<class S, class F>
+    friend Queue<S> filter(const Queue<S>& queue, F condition);
+
+    template <class S, class F>
+    friend void transform(Queue<S>& queue, F func);
 
 
 private:
@@ -223,33 +230,33 @@ private:
 //     }
 
 //     return newQueue;
-    
-// }
 
-template <class T, class F>
-Queue<T> filter(const Queue<T>& queue, const F condition)
+// }
+template <class S, class F>
+Queue<S> filter(const Queue<S>& queue, const F condition)
 {
-   // TODO: IMPLEMENT THIS
-   Queue<T> newQueue = Queue<T>();
-   for (Element element : queue)
-   {
+    // TODO: IMPLEMENT THIS
+    Queue<S> newQueue = Queue<S>();
+    for (const typename Queue<S>::Element& element : queue)
+    {
         if(condition(element.value))
         {
             newQueue.pushBack(element.value);
         }
     }
 
-   return newQueue;
+    return newQueue;
 }
 
-template <class T, class F>
-void transform(Queue<T>& queue, const F func)
+template <class S, class F>
+void transform(Queue<S>& queue, const F func)
 {
-   // TODO: IMPLEMENT THIS
-   for(Element element: queue)
-   {
-       element.value = func(element.value);
-   }
+    // TODO: IMPLEMENT THIS
+    for(typename Queue<S>::Element element: queue)
+    {
+//        std::cout << element.value << std::endl;
+        func(element.value);
+    }
 }
 
 
@@ -262,14 +269,14 @@ void transform(Queue<T>& queue, const F func)
 
 // Iterator class for the Queue class
 template<class T>
-class Queue<T>::Iterator 
+class Queue<T>::Iterator
 {
 private:
     Queue<T>* const m_queue; ///the iterators queue
     Queue<T>::Element* m_elementPtr;
 
     explicit Iterator(Queue<T>* const queue, Queue<T>::Element* const element)
-                      : m_queue(queue), m_elementPtr(element) {};
+            : m_queue(queue), m_elementPtr(element) {};
     friend class Queue<T>; /// does set access iterator members? think so - m_elementPtr
 
     ///are these needed?
@@ -331,7 +338,7 @@ private:
     const Queue<T>::Element* m_elementPtr;
 
     ConstIterator(const Queue<T>* const queue, const Queue<T>::Element* element)
-                  : m_queue(queue), m_elementPtr(element) {};
+            : m_queue(queue), m_elementPtr(element) {};
     friend class Queue<T>; /// does set access cIterator members? think so - m_elementPtr
 
     ///are these needed?
