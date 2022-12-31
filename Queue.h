@@ -126,8 +126,8 @@ public:
             m_tail = nullptr;
         }
 
-        delete (temp); /// do we delete the data T inside the element?
-        /// do we need to change element to struct with
+       delete (temp); /// do we delete the data T inside the element?
+                       /// do we need to change element to struct with
     }
 
     int size()
@@ -156,6 +156,9 @@ public:
     }
     Iterator end()
     {
+        if(empty()) {
+            return Iterator(this, m_tail);
+        }
         return Iterator(this, m_tail->next);
     }
 
@@ -165,6 +168,9 @@ public:
     }
     ConstIterator end() const
     {
+        if(empty()) {
+            return ConstIterator(this, m_tail);
+        }
         return ConstIterator(this, m_tail->next);
     }
 
@@ -217,7 +223,7 @@ Queue<S> filter(const Queue<S>& queue, const F condition)
 {
     // TODO: IMPLEMENT THIS
     Queue<S> newQueue = Queue<S>();
-    for (S& value : queue)
+    for (const S& value : queue)
     {
         if(condition(value))
         {
@@ -251,12 +257,7 @@ void transform(Queue<S>& queue, const F func)
 
 
 
-
-
-
-
-
-// Iterator class for the Queue class
+///do we need to implement iterator -> ?
 template<class T>
 class Queue<T>::Iterator
 {
@@ -264,34 +265,46 @@ private:
     Queue<T>* const m_queue; ///the iterators queue
     Queue<T>::Element* m_elementPtr;
 
-    explicit Iterator(Queue<T>* const queue, Queue<T>::Element* const element)
-            : m_queue(queue), m_elementPtr(element) {};
-    friend class Queue<T>; /// does set access iterator members? think so - m_elementPtr
+     Iterator(Queue<T>* const queue, Queue<T>::Element* const element)
+                      : m_queue(queue), m_elementPtr(element) {};
 
-    ///are these needed?
-    Iterator(const Iterator& iterator) = default;
-    /// does this copy c'tor need to be non default?-> : m_queue(iterator.m_queue), m_elementPtr(iterator.m_elementPtr) {}
+    ///is op=() needed?
     Iterator& operator=(const Iterator& iterator) ///of the same set!!
     {
+        if (iterator == m_queue->end()) {
+            throw InvalidOperation();
+        }
         assert (m_queue == iterator.m_queue && (this != iterator)); ///this or *this?? -> this
         m_elementPtr = iterator.m_elementPtr;
     }
 
+    friend class Queue<T>; /// does set access iterator members? think so - m_elementPtr
+
+
 
 public:
 
+    class InvalidOperation {};
+
+    ///are these needed?
+    Iterator(const Iterator& iterator) = default;
+    /// does this copy c'tor need to be non default?-> : m_queue(iterator.m_queue), m_elementPtr(iterator.m_elementPtr) {}
+
     T& operator*() const
     {
+        if (*this == m_queue->end()) { /// omer 31/12: this or *this?
+            throw InvalidOperation();
+        }
         assert(m_elementPtr!= nullptr);
-//        if (m_elementPtr== nullptr) {
-//            return nullptr;
-//        }
         return m_elementPtr->value;
     }
 
     Iterator& operator++()
     /// change all iterators++ to ++iterators in set
     {
+        if (*this == m_queue->end()) { /// omer 31/12: this or *this?
+            throw InvalidOperation();
+        }
         m_elementPtr= m_elementPtr->next;
         return *this;
     }
@@ -318,7 +331,7 @@ public:
 
 };
 
-
+///do we need to implement iterator -> ?
 template<class T>
 class Queue<T>::ConstIterator
 {
@@ -330,31 +343,33 @@ private:
             : m_queue(queue), m_elementPtr(element) {};
     friend class Queue<T>; /// does set access cIterator members? think so - m_elementPtr
 
-    ///are these needed?
-    ConstIterator(const ConstIterator& cIterator) = default;
-    ///copy c'tor - default or not? -> : m_queue(cIterator.m_queue), m_elementPtr(cIterator.m_elementPtr) {}
 
 
 public:
+    class InvalidOperation {};
     ///operator=() deleted
+    ///are these needed?
+    ConstIterator(const ConstIterator& cIterator) = default;
+    ///copy c'tor - default or not? -> : m_queue(cIterator.m_queue), m_elementPtr(cIterator.m_elementPtr) {}
     ConstIterator& operator=(const ConstIterator& cIterator) = delete;
 
     const T& operator*() const
     {
-        assert(m_elementPtr!= nullptr);
-//        if (m_elementPtr== nullptr) {
-//            return nullptr;
-//        }
+        if (*this == m_queue->end()) { /// omer 31/12: this or *this?
+            throw InvalidOperation();
+        }
         return m_elementPtr->value;
     }
 
     ConstIterator& operator++()
     /// change all cIterators++ to ++iterators in set
     {
+        if (*this == m_queue->end()) { /// omer 31/12: this or *this?
+            throw InvalidOperation();
+        }
         m_elementPtr= m_elementPtr->next;
         return *this;
     }
-
 
     ConstIterator operator++(int) ///not must
     ///whats the problem with cIterator no-const return here?
