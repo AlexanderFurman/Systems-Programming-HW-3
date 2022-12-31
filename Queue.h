@@ -195,53 +195,33 @@ private:
 
 };
 
+//
+//template <class S, class F>
+//Queue<S> filter(const Queue<S>& queue, const F condition)
+//{
+//    // TODO: IMPLEMENT THIS
+//    Queue<S> newQueue = Queue<S>();
+//    for (const typename Queue<S>::Element& element : queue)
+//    {
+//        if(condition(element.value))
+//        {
+//            newQueue.pushBack(element.value);
+//        }
+//    }
+//
+//    return newQueue;
+//}
 
-
-
-// template <class S>
-// Queue<S> filter(const Queue<S>& queue, bool func(S))
-// {
-//     // TODO: IMPLEMENT THIS
-//     Queue<S> newQueue = Queue();
-//     Element<S>* tempElement = queue->m_head;
-//     while(tempElement != nullptr)
-//     {
-//         if(func(tempElement->value))
-//         {
-//             newQueue.pushBack(tempElement->value);
-//         }
-//         tempElement = tempElement->next;
-//     }
-
-//     return newQueue;
-// }
-
-// template <class S>
-// Queue<S> transform(const Queue<S>& queue, void func(S))
-// {
-//     // TODO: IMPLEMENT THIS
-
-//     Queue<S> newQueue = Queue(queue);
-//     Element<S>* tempElement = newQueue->m_head;
-//     while(tempElement != nullptr)
-//     {
-//         tempElement->value = func(value);
-//         tempElement = tempElement->next;
-//     }
-
-//     return newQueue;
-
-// }
 template <class S, class F>
 Queue<S> filter(const Queue<S>& queue, const F condition)
 {
     // TODO: IMPLEMENT THIS
     Queue<S> newQueue = Queue<S>();
-    for (const typename Queue<S>::Element& element : queue)
+    for (S& value : queue)
     {
-        if(condition(element.value))
+        if(condition(value))
         {
-            newQueue.pushBack(element.value);
+            newQueue.pushBack(value);
         }
     }
 
@@ -251,14 +231,23 @@ Queue<S> filter(const Queue<S>& queue, const F condition)
 template <class S, class F>
 void transform(Queue<S>& queue, const F func)
 {
-    // TODO: IMPLEMENT THIS
-    for(typename Queue<S>::Element element: queue)
+    for(S& value:queue)
     {
-//        std::cout << element.value << std::endl;
-        func(element.value);
+        func(value);
     }
 }
 
+//template <class S, class F>
+//void transform(Queue<S>& queue, const F func)
+//{
+//    // TODO: IMPLEMENT THIS
+//    for(typename Queue<S>::Element& element: queue)
+//    {
+////        std::cout << element.value << std::endl;
+//        func(*element);
+//    }
+//}
+//
 
 
 
