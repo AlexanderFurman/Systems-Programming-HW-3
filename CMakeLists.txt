@@ -6,9 +6,10 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(HW3_clion
-        HealthPoints.h
         HealthPoints.cpp
+        HealthPoints.h
         HealthPointsExampleTest.cpp
+        Queue.h
         QueueExampleTests.cpp
         TestMain.cpp
         TestUtils.h)

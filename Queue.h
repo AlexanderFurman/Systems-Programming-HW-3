@@ -150,20 +150,20 @@ public:
 
     Iterator begin()
     {
-        return Iterator(m_head);
+        return Iterator(this, m_head);
     }
     Iterator end()
     {
-        return Iterator(m_tail->next);
+        return Iterator(this, m_tail->next);
     }
 
     ConstIterator begin() const
     {
-        return ConstIterator(m_head);
+        return ConstIterator(this, m_head);
     }
     ConstIterator end() const
     {
-        return ConstIterator(m_tail->next);
+        return ConstIterator(this, m_tail->next);
     }
 
     class EmptyQueue{};

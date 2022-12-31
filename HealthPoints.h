@@ -14,8 +14,8 @@ const int DEFAULT_MAX_HP = 100;
 class HealthPoints
 {
 public:
-    /**  constructors and destructors  **/
-    explicit HealthPoints(int MaxHP = DEFAULT_MAX_HP);
+    /** constructors and destructors **/
+    explicit HealthPoints(int MaxHP = DEFAULT_MAX_HP); ///explicit or not?
     HealthPoints(const HealthPoints&) = default;
     ~HealthPoints() = default;
     HealthPoints& operator=(const HealthPoints& copiedHP) = default;
