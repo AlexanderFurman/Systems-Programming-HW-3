@@ -163,8 +163,8 @@ private:
     struct Element
     {
         ///need to check we're not calling default c'tor of T (may not exist)
-        T value; /// think it's ok, but do we need T* or T ?
-        Element *next;
+        T m_value; /// think it's ok, but do we need T* or T ?
+        Element *m_next;
         /// add c'tor, d'tor, copy c'tor, operator=() (default if generated automatically)
     };
 
