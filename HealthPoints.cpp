@@ -14,16 +14,6 @@ HealthPoints::HealthPoints(int maxHP)
     m_MaxHP = maxHP;
 }
 
-int HealthPoints::getHP() const
-{
-    return m_HP;
-}
-
-int HealthPoints::getMaxHP() const
-{
-    return m_MaxHP;
-}
-
 HealthPoints::operator int() const
 {
     return int(m_HP);
@@ -104,7 +94,7 @@ bool operator>(const HealthPoints& HPLeft, HealthPoints& HPRight)
 
 std::ostream& operator<<(std::ostream& outStream, const HealthPoints& printedHP)
 {
-    outStream << printedHP.getHP() << "(" << printedHP.getMaxHP() << ")";
+    outStream << printedHP.m_HP << "(" << printedHP.m_MaxHP << ")";
     return outStream;
 }
 
