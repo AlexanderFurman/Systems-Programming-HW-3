@@ -42,17 +42,27 @@ public:
         // if passes all -> yayy!!
 
         /// maybe we should check syntax sweet for for loop ( for(Element el : otherQueue)?? )
-        ConstIterator i = otherQueue.begin();
+//        ConstIterator i = otherQueue.begin();
         /// omer 29/12: what's the intention in the loop?
         /// why =i? what do we check
         /// ; in two lines ahead - is it in purpose?
-        m_head = i;
-        temp = m_head;
-        for (i != end(); i++) /// for(Element el : otherQueue)
+//        m_head = i;
+//        temp = m_head;
+//        for (i != end(); i++) /// for(Element el : otherQueue)
+        for (Element* element : otherQueue)
         {
-            temp->next = i;
-            temp = i;
-            m_tail = i;
+            try
+            {
+                pushBack(element->value);
+            }
+            catch (std::bad_alloc& badAlloc)
+            {
+                while(!empty())
+                {
+                    popFront();
+                }
+                throw badAlloc;
+            }
         }
     }
 
@@ -114,7 +124,7 @@ public:
             m_tail = nullptr;
         }
 
-        delete (temp); /// do we delete the data T inside the element?
+//        delete (temp); /// do we delete the data T inside the element?
                        /// do we need to change element to struct with
     }
 
@@ -166,6 +176,11 @@ private:
         T m_value; /// think it's ok, but do we need T* or T ?
         Element *m_next;
         /// add c'tor, d'tor, copy c'tor, operator=() (default if generated automatically)
+        explicit Element(const T& data) : m_value(data), m_next(nullptr) {}
+        // Element(const Element& copiedElement) {} //if needed add..
+        ~Element() = default;
+
+
     };
 
     Element* m_head;
