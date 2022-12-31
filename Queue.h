@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 #ifndef Queue_h
 #define Queue_h
 
@@ -49,7 +50,7 @@ public:
 //        m_head = i;
 //        temp = m_head;
 //        for (i != end(); i++) /// for(Element el : otherQueue)
-        for (Element* element : otherQueue)
+        for (const Element element : otherQueue)
         {
             try
             {
@@ -77,7 +78,7 @@ public:
         //free(m_tail); /// omer 29/12: why do we free them? whats left?
     }
 
-    bool empty() {return m_head == nullptr;}
+    bool empty() const {return m_head == nullptr;}
 
     void pushBack(T data)
     {
