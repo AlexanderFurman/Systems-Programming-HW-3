@@ -15,14 +15,10 @@ class HealthPoints
 {
 public:
     /** constructors and destructors **/
-    explicit HealthPoints(int MaxHP = DEFAULT_MAX_HP); ///explicit or not?
+    HealthPoints(int MaxHP = DEFAULT_MAX_HP); ///explicit or not?
     HealthPoints(const HealthPoints&) = default;
     ~HealthPoints() = default;
     HealthPoints& operator=(const HealthPoints& copiedHP) = default;
-
-    /**  getters and setters  **/
-    int getHP() const;
-    int getMaxHP() const;
 
     /**  operator methods  **/
     /// arithmetic:
@@ -32,10 +28,13 @@ public:
     ///conversion operator
     explicit operator int() const;
 
-    /**  other methods  **/
+    ///output operator << ( using getHP() )
+    friend std::ostream& operator<<(std::ostream& outStream, const HealthPoints& printedHP);
+
 
     /** exceptions **/
     class InvalidArgument{};
+
 
 
 private:
@@ -62,7 +61,5 @@ bool operator<=(const HealthPoints& HPLeft, HealthPoints& HPRight);
 bool operator>(const HealthPoints& HPLeft, HealthPoints& HPRight);
 bool operator>=(const HealthPoints& HPLeft, HealthPoints& HPRight);
 
-///output operator << ( using getHP() )
-std::ostream& operator<<(std::ostream& outStream, const HealthPoints& printedHP);
 
 #endif //HW3_CLION_HEALTHPOINTS_H
