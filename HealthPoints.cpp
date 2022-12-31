@@ -61,33 +61,33 @@ HealthPoints operator-(const HealthPoints& HP, int subbedHP)
 //    return HP-subbedHP;
 //}
 
-bool operator==(const HealthPoints& HPLeft, HealthPoints& HPRight)
+bool operator==(const HealthPoints& HPLeft, const HealthPoints& HPRight)
 {
     return int(HPLeft) == int(HPRight);
 }
 
-bool operator!=(const HealthPoints& HPLeft, HealthPoints& HPRight)
+bool operator!=(const HealthPoints& HPLeft, const HealthPoints& HPRight)
 {
     return !(HPLeft == HPRight);
 }
 
-bool operator<(const HealthPoints& HPLeft, HealthPoints& HPRight)
+bool operator<(const HealthPoints& HPLeft, const HealthPoints& HPRight)
 {
     return int(HPLeft) < int(HPRight);
 }
 
-bool operator>=(const HealthPoints& HPLeft, HealthPoints& HPRight)
+bool operator>=(const HealthPoints& HPLeft, const HealthPoints& HPRight)
 {
     return !(HPLeft < HPRight);
 }
 
 
-bool operator<=(const HealthPoints& HPLeft, HealthPoints& HPRight)
+bool operator<=(const HealthPoints& HPLeft, const HealthPoints& HPRight)
 {
     return (HPLeft == HPRight) ||  (HPLeft < HPRight);
 }
 
-bool operator>(const HealthPoints& HPLeft, HealthPoints& HPRight)
+bool operator>(const HealthPoints& HPLeft, const HealthPoints& HPRight)
 {
     return !(HPLeft <= HPRight);
 }

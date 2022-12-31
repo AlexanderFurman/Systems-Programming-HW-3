@@ -79,12 +79,15 @@ public:
         //free(m_tail); /// omer 29/12: why do we free them? whats left?
     }
 
-    bool empty() const {return m_head == nullptr;}
+    bool empty() const
+    {
+        return m_head == nullptr;
+    }
 
     void pushBack(T data)
     {
         /// omer 29/12: if fails throw bad alloc
-        Element* newElement = new Element(data);
+        Element* newElement = new Element(data); ///omer 31/12: can we do it without dynamic allocation?
 
         // /// if fails throw bad alloc ?
         // newElement->value = data;
@@ -101,7 +104,7 @@ public:
         m_tail = newElement;
     }
 
-    T& front()
+    T& front() const ///omer 31/12: isn't it open to changing from user even when const?
     {
         if(empty())
         {
@@ -130,7 +133,7 @@ public:
                        /// do we need to change element to struct with
     }
 
-    int size()
+    int size() const
     /// omer 29/12: use iterator
     {
         if(empty()) {

@@ -52,14 +52,14 @@ HealthPoints operator-(const HealthPoints& HP, int subbedHP);
 //HealthPoints operator-(int subbedHP, const HealthPoints& HP); //irrelevant
 
 ///basic boolean operators (using getHP instead of friends):
-bool operator<(const HealthPoints& HPLeft, HealthPoints& HPRight);
-bool operator==(const HealthPoints& HPLeft, HealthPoints& HPRight);
+bool operator<(const HealthPoints& HPLeft, const HealthPoints& HPRight);
+bool operator==(const HealthPoints& HPLeft, const HealthPoints& HPRight);
 
 ///boolean operators implemented by ==, <
-bool operator!=(const HealthPoints& HPLeft, HealthPoints& HPRight);
-bool operator<=(const HealthPoints& HPLeft, HealthPoints& HPRight);
-bool operator>(const HealthPoints& HPLeft, HealthPoints& HPRight);
-bool operator>=(const HealthPoints& HPLeft, HealthPoints& HPRight);
+bool operator!=(const HealthPoints& HPLeft, const HealthPoints& HPRight);
+bool operator<=(const HealthPoints& HPLeft, const HealthPoints& HPRight);
+bool operator>(const HealthPoints& HPLeft, const HealthPoints& HPRight);
+bool operator>=(const HealthPoints& HPLeft, const HealthPoints& HPRight);
 
 
 #endif //HW3_CLION_HEALTHPOINTS_H
