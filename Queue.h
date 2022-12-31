@@ -53,7 +53,7 @@ public:
         {
             try
             {
-                pushBack(element->getValue());
+                pushBack(element->value);
             }
             catch (std::bad_alloc& badAlloc)
             {
@@ -177,11 +177,7 @@ private:
         T value; /// think it's ok, but do we need T* or T ?
         Element *next;
         /// add c'tor, d'tor, copy c'tor, operator=() (default if generated automatically)
-        Element(T data)
-        {
-            value = data; // calls copy constructor of T
-            next = nullptr;
-        }
+        Element(T data): value(data), next(nullptr){};
 
         //~Element() = default; Do I need to have this defined?
     };
