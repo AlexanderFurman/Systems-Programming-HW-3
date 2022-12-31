@@ -54,7 +54,7 @@ public:
         {
             try
             {
-                pushBack(element->value);
+                pushBack(element.value);
             }
             catch (std::bad_alloc& badAlloc)
             {
