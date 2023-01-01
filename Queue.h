@@ -23,80 +23,83 @@ template <class T>
 class Queue
 {
 public:
-    /// omer 29/12: do we need operator=() ?
+/**
+ * default constructor
+ * inputs: none
+ * outputs: none
+ * possible errors: none
+ */
     Queue(): m_head(nullptr), m_tail(nullptr) {}
+
+/**
+ * copy constructor
+ * inputs: reference to another Queue object
+ * outputs: none
+ * possible errors: std::bad_alloc
+ */
     Queue(const Queue& otherQueue) : m_head(nullptr), m_tail(nullptr)
     {
-        if(otherQueue.empty()) /// omer 29/12: exception?
+        if(otherQueue.empty())
         {
-            /// omer 29/12: tutorial 8 slide 11 bottom (copy c'tor)
-            // this = Queue()  How to do this??
-            //Queue();
             return;
         }
-        /// Queue Q1 = existingQueue
-        // create e,pty queue in initialization list
-        // for (each in otherqueue) -> pushBack
-        // if fails (bad alloc was thrown from pushBack):
-        //      1. catch bad alloc
-        //      2. delete current queue
-        //      3. throw bad_alloc
-        // if passes all -> yayy!!
 
-        /// maybe we should check syntax sweet for for loop ( for(Element el : otherQueue)?? )
-//        ConstIterator i = otherQueue.begin();
-        /// omer 29/12: what's the intention in the loop?
-        /// why =i? what do we check
-        /// ; in two lines ahead - is it in purpose?
-//        m_head = i;
-//        temp = m_head;
-//        for (i != end(); i++) /// for(Element el : otherQueue)
-        for (const Element element : otherQueue)
+        try
         {
-            try
+            for (const Element element : otherQueue)
             {
                 pushBack(element.value);
             }
-            catch (std::bad_alloc& badAlloc)
+
+        }
+        catch (std::bad_alloc& badAlloc)
+        {
+            while(!empty())
             {
-                while(!empty())
-                {
-                    popFront();
-                }
-                throw badAlloc;
+                popFront();
             }
+            throw badAlloc;
         }
     }
+
+/**
+ * assignment operator
+ * inputs: reference to another Queue object
+ * outputs: reference to the current Queue object (*this)
+ * possible errors: std::bad_alloc
+ */
 
     Queue& operator=(const Queue& otherQueue)
     {
         int originalSize = size();
+        int currentSize = 0;
 
         if(this == &otherQueue)
         {
             return *this;
         }
 
-        for (const Element element : otherQueue)
+        try
         {
-
-            try
+            for (const Element element : otherQueue)
             {
                 pushBack(element.value);
-            }
-            catch (std::bad_alloc& badAlloc)
-            {
-                int currentSize = size();
-
-                for (int i = 0; i < originalSize; i++) {
-                    pushBack(front());
-                }
-                for (int i = 0; i < currentSize; i++) {
-                    popFront();
-                }
-                throw badAlloc;
+                currentSize ++;
             }
         }
+        catch (std::bad_alloc& badAlloc)
+        {
+            for (int i = 0; i < originalSize; i++) {
+                pushBack(front());
+                popFront();
+            }
+            for (int i = 0; i < currentSize; i++) {
+                popFront();
+            }
+
+            throw badAlloc;
+        }
+
         for(int i = 0; i < originalSize; i++)
         {
             popFront();
@@ -104,30 +107,40 @@ public:
         return *this;
     }
 
+/**
+ * destructor
+ * inputs: none
+ * outputs: none
+ * possible errors: none
+ */
     ~Queue()
     {
         while(!empty())
         {
             popFront();
         }
-        //free(m_head); /// omer 29/12: why do we free them? whats left?
-        //free(m_tail); /// omer 29/12: why do we free them? whats left?
     }
 
+/**
+ * function to check if the Queue is empty
+ * inputs: none
+ * outputs: const bool
+ * possible errors: none
+ */
     bool empty() const
     {
         return m_head == nullptr;
     }
 
+/**
+ * function to add data to Queue
+ * inputs: T data
+ * outputs: none
+ * possible errors: std::bad_alloc
+ */
     void pushBack(T data)
     {
-        /// omer 29/12: if fails throw bad alloc
-        Element* newElement = new Element(data); ///omer 31/12: can we do it without dynamic allocation?
-
-        // /// if fails throw bad alloc ?
-        // newElement->value = data;
-        // newElement->next = nullptr;
-
+        Element* newElement = new Element(data);
         if(empty())
         {
             m_head = newElement;
@@ -139,7 +152,14 @@ public:
         m_tail = newElement;
     }
 
-    T& front() const ///omer 31/12: isn't it open to changing from user even when const?
+/**
+ * function to return the value at the front of the Queue
+ * inputs: none
+ * outputs: reference to T data
+ * possible errors: EmptyQueue error
+ */
+
+    T& front() const
     {
         if(empty())
         {
@@ -148,28 +168,35 @@ public:
         return m_head->value;
     }
 
+/**
+ * function to remove data from front of Queue
+ * inputs: none
+ * outputs: none
+ * possible errors: EmptyQueue error
+ */
     void popFront()
     {
-        /// omer 31/12: do we need to return or to throw EmptyQueue()?
         if(empty()) {
             throw EmptyQueue();
         }
 
         Element* temp = m_head;
         m_head = m_head->next;
-
-        // Check if this operation has caused m_head to point to null
         if(m_head == nullptr)
         {
             m_tail = nullptr;
         }
 
-       delete (temp); /// do we delete the data T inside the element?
-                       /// do we need to change element to struct with
+       delete temp;
     }
 
+/**
+ * function to get current size of the Queue
+ * inputs: none
+ * outputs: int size of queue
+ * possible errors: none
+ */
     int size() const
-    /// omer 29/12: use iterator
     {
         if(empty()) {
             return 0;
@@ -179,7 +206,6 @@ public:
         while(temp->next != nullptr)
         {
             counter++;
-            /// omer 29/12: added row bellow:
             temp = temp->next;
         }
         return counter;
@@ -188,10 +214,23 @@ public:
     class Iterator;
     class ConstIterator;
 
+    /**
+ * function to get iterator of first element in queue
+ * inputs: none
+ * outputs: Iterator
+ * possible errors: none
+ */
     Iterator begin()
     {
         return Iterator(this, m_head);
     }
+
+    /**
+ * function to get iterator after the last element in queue (element->next nullptr)
+ * inputs: none
+ * outputs: Iterator
+ * possible errors: none
+ */
     Iterator end()
     {
         if(empty()) {
@@ -200,10 +239,23 @@ public:
         return Iterator(this, m_tail->next);
     }
 
+    /**
+ * function to get constant iterator of first element in queue
+ * inputs: none
+ * outputs: ConstIterator
+ * possible errors: none
+ */
     ConstIterator begin() const
     {
         return ConstIterator(this, m_head);
     }
+
+    /**
+ * function to get const iterator after the last element in queue (element->next nullptr)
+ * inputs: none
+ * outputs: ConstIterator
+ * possible errors: none
+ */
     ConstIterator end() const
     {
         if(empty()) {
@@ -225,37 +277,33 @@ private:
 
     struct Element
     {
-        ///need to check we're not calling default c'tor of T (may not exist)
-        T value; /// think it's ok, but do we need T* or T ?
+        T value;
         Element *next;
-        /// add c'tor, d'tor, copy c'tor, operator=() (default if generated automatically)
+        /**
+* constructor which creates an Element within a linked list
+* inputs: T data
+* outputs: none
+* possible errors: std::bad_alloc
+*/
         Element(T data): value(data), next(nullptr){};
-
-        //~Element() = default; Do I need to have this defined?
     };
 
+    /**
+     * pointers to first and last element in our linked list data structure
+*/
     Element* m_head;
     Element* m_tail;
 
 };
 
-//
-//template <class S, class F>
-//Queue<S> filter(const Queue<S>& queue, const F condition)
-//{
-//    // TODO: IMPLEMENT THIS
-//    Queue<S> newQueue = Queue<S>();
-//    for (const typename Queue<S>::Element& element : queue)
-//    {
-//        if(condition(element.value))
-//        {
-//            newQueue.pushBack(element.value);
-//        }
-//    }
-//
-//    return newQueue;
-//}
-
+/**
+* function to return new Queue which is made up of elements of another queue
+ * which meet some condition.
+ *
+* inputs: some Queue object, boolean Function Pointer/Object
+* outputs: Queue object
+* possible errors: std::bad_alloc, or any other errors from the function (user function)
+*/
 template <class S, class F>
 Queue<S> filter(const Queue<S>& queue, const F condition)
 {
@@ -272,6 +320,14 @@ Queue<S> filter(const Queue<S>& queue, const F condition)
     return newQueue;
 }
 
+/**
+* function to return new Queue which has transformed all the data of the queue
+ * using some function
+* inputs: some Queue object, tranformer Function Pointer/Object
+* outputs: Queue object
+* possible errors: std::bad_alloc, or any other errors from the function (user function)
+*/
+
 template <class S, class F>
 void transform(Queue<S>& queue, const F func)
 {
@@ -281,95 +337,126 @@ void transform(Queue<S>& queue, const F func)
     }
 }
 
-//template <class S, class F>
-//void transform(Queue<S>& queue, const F func)
-//{
-//    // TODO: IMPLEMENT THIS
-//    for(typename Queue<S>::Element& element: queue)
-//    {
-////        std::cout << element.value << std::endl;
-//        func(*element);
-//    }
-//}
-//
 
 
-
-///do we need to implement iterator -> ?
 template<class T>
 class Queue<T>::Iterator
 {
 private:
-    Queue<T>* const m_queue; ///the iterators queue
+    Queue<T>* const m_queue;
     Queue<T>::Element* m_elementPtr;
 
+    /**
+* constructor
+* inputs: pointer to Queue, pointer to element
+* outputs: none
+* possible errors: none
+*/
      Iterator(Queue<T>* const queue, Queue<T>::Element* const element)
                       : m_queue(queue), m_elementPtr(element) {};
 
-    ///is op=() needed?
-    Iterator& operator=(const Iterator& iterator) ///of the same set!!
+    /**
+* assignment operator
+* inputs: reference to Iterator
+* outputs: reference Iterator
+* possible errors: none
+*/
+    Iterator& operator=(const Iterator& iterator)
     {
         if (iterator == m_queue->end()) {
             throw InvalidOperation();
         }
-        assert (m_queue == iterator.m_queue && (this != iterator)); ///this or *this?? -> this
+        assert (m_queue == iterator.m_queue && (this != iterator));
         m_elementPtr = iterator.m_elementPtr;
     }
 
-    friend class Queue<T>; /// does set access iterator members? think so - m_elementPtr
-
+    friend class Queue<T>;
 
 
 public:
 
     class InvalidOperation {};
 
+    /**
+* constructor
+* inputs: const reference to Iterator
+* outputs: none
+* possible errors: none
+*/
+
     ///are these needed?
     Iterator(const Iterator& iterator) = default;
     /// does this copy c'tor need to be non default?-> : m_queue(iterator.m_queue), m_elementPtr(iterator.m_elementPtr) {}
 
+    /**
+* dereferencing operator which returns the Queue's value from the Iterator
+* inputs: none
+* outputs: reference to T data
+* possible errors: InvalidOperation error
+*/
     T& operator*() const
     {
-        if (*this == m_queue->end()) { /// omer 31/12: this or *this?
+        if (*this == m_queue->end()) {
             throw InvalidOperation();
         }
         assert(m_elementPtr!= nullptr);
         return m_elementPtr->value;
     }
 
+    /**
+* increment operator which returns the Queue's next iterator
+* inputs: none
+* outputs: reference to Iterator
+* possible errors: InvalidOperation error
+*/
     Iterator& operator++()
     /// change all iterators++ to ++iterators in set
     {
-        if (*this == m_queue->end()) { /// omer 31/12: this or *this?
+        if (*this == m_queue->end()) {
             throw InvalidOperation();
         }
         m_elementPtr= m_elementPtr->next;
         return *this;
     }
 
-
-    Iterator operator++(int) ///not must
-    ///whats the problem with Iterator no-const return here?
+    /**
+* postfix increment operator which returns the Queue's next iterator
+* inputs: int dummy argument
+* outputs: Iterator
+* possible errors: none
+*/
+    Iterator operator++(int)
     {
         Iterator result = *this;
         ++(*this); //Calls the prefix operator on the original iterator
         return result; //returns the value of the iterator before the change
     }
 
-    bool operator==(const Iterator& iterator) const ///not must
+    /**
+*  equality operator which checks if 2 iterators (this and other) point to the same data in the linked list
+* inputs: Iterator reference
+* outputs: boolean value
+* possible errors: none
+*/
+
+    bool operator==(const Iterator& iterator) const
     {
         assert(m_queue == iterator.m_queue);
         return m_elementPtr == iterator.m_elementPtr;
     }
 
+    /**
+*  inequality operator which checks if 2 iterators (this and other) do NOT point to the same data in the linked list
+* inputs: Iterator reference
+* outputs: boolean value
+* possible errors: none
+*/
     bool operator!=(const Iterator& iterator) const
     {
         return !( *this == iterator );
     }
 
 };
-
-///do we need to implement iterator -> ?
 template<class T>
 class Queue<T>::ConstIterator
 {
@@ -379,18 +466,28 @@ private:
 
     ConstIterator(const Queue<T>* const queue, const Queue<T>::Element* element)
             : m_queue(queue), m_elementPtr(element) {};
-    friend class Queue<T>; /// does set access cIterator members? think so - m_elementPtr
+    friend class Queue<T>;
 
 
 
 public:
     class InvalidOperation {};
-    ///operator=() deleted
-    ///are these needed?
+    /**
+* constructor
+* inputs: const reference to ConstIterator
+* outputs: none
+* possible errors: none
+*/
     ConstIterator(const ConstIterator& cIterator) = default;
-    ///copy c'tor - default or not? -> : m_queue(cIterator.m_queue), m_elementPtr(cIterator.m_elementPtr) {}
+
     ConstIterator& operator=(const ConstIterator& cIterator) = delete;
 
+    /**
+  * dereferencing operator which returns const of the Queue's value from the ConstIterator
+  * inputs: none
+  * outputs: const reference to T data
+  * possible errors: InvalidOperation error
+  */
     const T& operator*() const
     {
         if (*this == m_queue->end()) { /// omer 31/12: this or *this?
@@ -399,78 +496,56 @@ public:
         return m_elementPtr->value;
     }
 
+    /**
+* increment operator which returns the Queue's next constiterator
+* inputs: none
+* outputs: reference to ConstIterator
+* possible errors: InvalidOperation error
+*/
     ConstIterator& operator++()
-    /// change all cIterators++ to ++iterators in set
     {
-        if (*this == m_queue->end()) { /// omer 31/12: this or *this?
+        if (*this == m_queue->end()) {
             throw InvalidOperation();
         }
         m_elementPtr= m_elementPtr->next;
         return *this;
     }
 
-    ConstIterator operator++(int) ///not must
-    ///whats the problem with cIterator no-const return here?
+    /**
+* postfix increment operator which returns the Queue's next constiterator
+* inputs: int dummy argument
+* outputs: ConstIterator
+* possible errors: none
+*/
+    ConstIterator operator++(int)
     {
         ConstIterator result = *this;
         ++(*this); //Calls the prefix operator on the original cIterator
         return result; //returns the object of the cIterator before the change
     }
 
-    bool operator==(const ConstIterator& cIterator) const ///not must
+    /**
+*  equality operator which checks if 2 constiterators point (this and other) to the same data in the linked list
+* inputs: ConstIterator reference
+* outputs: boolean value
+* possible errors: none
+*/
+    bool operator==(const ConstIterator& cIterator) const
     {
         assert(m_queue == cIterator.m_queue);
         return m_elementPtr == cIterator.m_elementPtr;
     }
 
+    /**
+*  inequality operator which checks if 2 constiterators (this and other) do NOT point to the same data in the linked list
+* inputs: ConstIterator reference
+* outputs: boolean value
+* possible errors: none
+*/
     bool operator!=(const ConstIterator& cIterator) const
     {
         return !( *this == cIterator );
     }
 
 };
-
-
-///prev ConstIterator implementation
-//// ConstIterator class for the Queue class
-//template<class T>
-//class Queue<T>::ConstIterator
-//{
-//    Element<T>* m_element;
-//
-//public:
-//    ConstIterator(Element<T>* element) : m_element(element){};
-//    const T& operator*()
-//    {
-//        return m_element->value;
-//    }
-//
-//    const ConstIterator& operator++(int)
-//    {
-//        Iterator iterator = *this;
-//        ++(*this); //Calls the prefix operator on the original iterator
-//        return iterator; //returns the value of the iterator before the change
-//    }
-//
-//    const Iterator& operator++()
-//    {
-//        m_element++;
-//        return *this
-//    }
-//
-//    bool operator==(const Iterator& iterator) const
-//    {
-//        return m_element == iterator.m_element;
-//    }
-//    bool operator!=(const Iterator& iterator) const
-//    {
-//        return m_element != iterator.m_element;
-//    }
-//
-//    Iterator(const Iterator& iterator): m_element(iterator.m_element) {}
-//    const Iterator& operator=(const Iterator& iterator): m_element(iterator.m_element) {}
-//};
-
-
-
 #endif
