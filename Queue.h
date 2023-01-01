@@ -68,6 +68,41 @@ public:
         }
     }
 
+    Queue& operator=(const Queue& otherQueue)
+    {
+        int originalSize = size();
+
+        if(this == &otherQueue)
+        {
+            return *this;
+        }
+
+        for (const Element element : otherQueue)
+        {
+
+            try
+            {
+                pushBack(element.value);
+            }
+            catch (std::bad_alloc& badAlloc)
+            {
+                int currentSize = size();
+
+                for (int i = 0; i < originalSize; i++) {
+                    pushBack(front());
+                }
+                for (int i = 0; i < currentSize; i++) {
+                    popFront();
+                }
+                throw badAlloc;
+            }
+        }
+        for(int i = 0; i < originalSize; i++)
+        {
+            popFront();
+        }
+        return *this;
+    }
 
     ~Queue()
     {

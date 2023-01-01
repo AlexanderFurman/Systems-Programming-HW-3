@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 #include "catch.hpp"
 #include "relativeIncludes.h"
 

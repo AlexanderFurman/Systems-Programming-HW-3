@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <sstream>
 #include "catch.hpp"
 #include "relativeIncludes.h"
 
